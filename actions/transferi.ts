@@ -74,6 +74,7 @@ export async function createTransfer(formData: FormData): Promise<TransferRecord
   const vrijeme = parseTimeOnly(getRequiredString(formData, "vrijeme"))
   const datumVrijemeUtc = combineDateAndTimeUtc(datum, vrijeme)
   const alarmEnabled = formData.get("alarmEnabled") === "on"
+  const emailEnabled = formData.get("emailEnabled") === "on"
 
   await assertNoTransferOverlap(datum, vrijeme)
 
@@ -86,6 +87,7 @@ export async function createTransfer(formData: FormData): Promise<TransferRecord
       vrijeme,
       datumVrijemeUtc,
       alarmEnabled,
+      emailEnabled,
       korisnik: getOptionalString(formData, "korisnik"),
     },
   })
@@ -104,6 +106,7 @@ export async function updateTransfer(formData: FormData): Promise<TransferRecord
   const rawDatum = formData.get("datum")
   const rawVrijeme = formData.get("vrijeme")
   const alarmEnabled = formData.get("alarmEnabled") === "on"
+  const emailEnabled = formData.get("emailEnabled") === "on"
 
   const current = await prisma.transfer.findUnique({ where: { id } })
 
@@ -128,6 +131,10 @@ export async function updateTransfer(formData: FormData): Promise<TransferRecord
     current.datumVrijemeUtc.getTime() !== datumVrijemeUtc.getTime() ||
     current.alarmEnabled !== alarmEnabled
 
+  const shouldResetEmailSentAt =
+    current.datumVrijemeUtc.getTime() !== datumVrijemeUtc.getTime() ||
+    current.emailEnabled !== emailEnabled
+
   const transfer = await prisma.transfer.update({
     where: { id },
     data: {
@@ -144,6 +151,8 @@ export async function updateTransfer(formData: FormData): Promise<TransferRecord
       datumVrijemeUtc,
       alarmEnabled,
       alarmSentAt: shouldResetAlarmSentAt ? null : undefined,
+      emailEnabled,
+      emailSentAt: shouldResetEmailSentAt ? null : undefined,
       korisnik: formData.has("korisnik")
         ? getOptionalString(formData, "korisnik")
         : undefined,
@@ -174,6 +183,8 @@ export async function deleteTransfer(formData: FormData): Promise<TransferRecord
         datumVrijemeUtc: deleted.datumVrijemeUtc,
         alarmEnabled: deleted.alarmEnabled,
         alarmSentAt: deleted.alarmSentAt,
+        emailEnabled: deleted.emailEnabled,
+        emailSentAt: deleted.emailSentAt,
         korisnik: deleted.korisnik,
       },
     })

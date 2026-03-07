@@ -193,6 +193,16 @@ export default function DodajTransferPage() {
 					<span>Uključi alarm notifikaciju za ovaj transfer</span>
 				</label>
 
+				<label className="flex items-center gap-2 text-sm">
+					<input
+						type="checkbox"
+						name="emailEnabled"
+						defaultChecked
+						className="h-4 w-4 rounded border"
+					/>
+					<span>Pošalji email obavještenje o zakazanom transferu</span>
+				</label>
+
 				{error ? <p className="text-sm text-red-600">{error}</p> : null}
 
 				<SubmitButton />

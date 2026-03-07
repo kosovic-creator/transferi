@@ -28,6 +28,8 @@ model Transfer {
   datumVrijemeUtc DateTime
   alarmEnabled Boolean @default(true)
   alarmSentAt DateTime?
+  emailEnabled Boolean @default(false)
+  emailSentAt DateTime?
 
   @@index([datumVrijemeUtc, alarmSentAt])
 
@@ -44,6 +46,8 @@ model ArhivaTransfera {
   datumVrijemeUtc DateTime
   alarmEnabled Boolean @default(true)
   alarmSentAt DateTime?
+  emailEnabled Boolean @default(false)
+  emailSentAt DateTime?
 }
 
 model PushSubscription {
