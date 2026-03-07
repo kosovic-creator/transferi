@@ -5,6 +5,17 @@ import { sendWebPush } from "@/lib/web-push"
 
 export const dynamic = "force-dynamic"
 
+function isAuthorized(request: Request, cronSecret: string): boolean {
+    const authorization = request.headers.get("authorization")
+    if (authorization === `Bearer ${cronSecret}`) {
+        return true
+    }
+
+    const url = new URL(request.url)
+    const querySecret = url.searchParams.get("secret")
+    return querySecret === cronSecret
+}
+
 function relacijaToLabel(relacija: "APARTMAN_AERODROM" | "AERODROM_APARTMAN"): string {
   if (relacija === "APARTMAN_AERODROM") {
     return "apartman-aerodrom"
@@ -29,9 +40,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "CRON_SECRET nije postavljen." }, { status: 500 })
   }
 
-  const authorization = request.headers.get("authorization")
-
-  if (authorization !== `Bearer ${cronSecret}`) {
+    if (!isAuthorized(request, cronSecret)) {
     return NextResponse.json({ error: "Nedozvoljen pristup." }, { status: 401 })
   }
 
@@ -99,4 +108,8 @@ export async function GET(request: Request) {
     processedTransfers,
     sentNotifications,
   })
+}
+
+export async function POST(request: Request) {
+    return GET(request)
 }

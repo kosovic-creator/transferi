@@ -61,7 +61,26 @@ Vercel će automatski prepoznati `vercel.json` i postaviti cron job koji poziva:
 ```
 GET /api/jobs/send-transfer-reminders
 ```
-svakog minuta.
+jednom dnevno (Hobby limit).
+
+### Vazno za Vercel Hobby
+
+Na Hobby planu Vercel ne dozvoljava cron na svake minute. Zato je preporuka:
+
+1. Vercel cron koristi se kao dnevni fallback.
+2. Za alarm u realnom vremenu koristi eksterni scheduler (npr. cron-job.org, EasyCron, GitHub Actions) na svakih 1 minut.
+
+Primjer URL-a za eksterni scheduler:
+
+```text
+https://<tvoj-domen>/api/jobs/send-transfer-reminders?secret=<CRON_SECRET>
+```
+
+Endpoint i dalje podrzava i header autentikaciju:
+
+```text
+Authorization: Bearer <CRON_SECRET>
+```
 
 **Važno:** U Vercel dashboard-u dodaj sve env varijable iz `.env` fajla (osim `DATABASE_URL` ako koristiš Vercel Postgres integration).
 
@@ -107,13 +126,19 @@ Ako push ne radi za nekog korisnika, možeš implementirati:
 
 ### Debug cron endpoint lokalno
 
-Možeš ručno testirati endpoint:
+Mozes rucno testirati endpoint:
 
 ```bash
 curl -X GET http://localhost:3000/api/jobs/send-transfer-reminders \
   -H "Authorization: Bearer <CRON_SECRET>"
 ```
-a
+
+Ili preko query parametra:
+
+```bash
+curl -X GET "http://localhost:3000/api/jobs/send-transfer-reminders?secret=<CRON_SECRET>"
+```
+
 Odgovor bi trebao biti:
 ```json
 {
