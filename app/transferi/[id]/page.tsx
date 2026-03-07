@@ -185,17 +185,7 @@ export default async function TransferEditPage({ params }: TransferEditPageProps
             defaultChecked={transfer.alarmEnabled}
             className="h-4 w-4 rounded border"
           />
-          <span>Uključi alarm notifikaciju za ovaj transfer</span>
-        </label>
-
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            name="emailEnabled"
-            defaultChecked={transfer.emailEnabled}
-            className="h-4 w-4 rounded border"
-          />
-          <span>Pošalji email obavještenje o zakazanom transferu</span>
+          <span>Pošalji push obavještenje 1 sat prije transfera</span>
         </label>
 
         <button

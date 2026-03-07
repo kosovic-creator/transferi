@@ -44,6 +44,9 @@ export default function DodajTransferPage() {
 	const [error, setError] = useState<string | null>(null)
 	const [sat, setSat] = useState("")
 	const [minuta, setMinuta] = useState("")
+	const [korisnik, setKorisnik] = useState("")
+	const [sendNowChecked, setSendNowChecked] = useState(false)
+	const [sendingNow, setSendingNow] = useState(false)
 	const today = useMemo(() => {
 		const now = new Date()
 		now.setHours(0, 0, 0, 0)
@@ -73,6 +76,41 @@ export default function DodajTransferPage() {
 		return Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0"))
 	}, [])
 
+	async function handleSendNowToggle(checked: boolean) {
+		setSendNowChecked(checked)
+
+		if (!checked) {
+			return
+		}
+
+		try {
+			setSendingNow(true)
+			const response = await fetch("/api/push/send-now", {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({
+					userKey: korisnik.trim(),
+					relacija,
+					datum: datumString,
+					vrijeme: vrijemeString,
+				}),
+			})
+
+			const data = (await response.json()) as { error?: string; sentCount?: number }
+			if (!response.ok) {
+				throw new Error(data.error ?? "Greška pri slanju push obavještenja.")
+			}
+
+			toast.success(`Push obavještenje poslato (${data.sentCount ?? 0}).`)
+		} catch (e) {
+			const message = e instanceof Error ? e.message : "Greška pri slanju push obavještenja."
+			toast.error(message)
+		} finally {
+			setSendingNow(false)
+			setSendNowChecked(false)
+		}
+	}
+
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col px-4 py-10">
 			<div className="mb-8 space-y-2">
@@ -94,6 +132,7 @@ export default function DodajTransferPage() {
 						setDatum(undefined)
 						setSat("")
 						setMinuta("")
+						setKorisnik("")
 						setTimeout(() => {
                             router.push("/")
 						}, 800)
@@ -180,8 +219,30 @@ export default function DodajTransferPage() {
 
 				<div className="space-y-2">
 					<label className="text-sm font-medium">Korisnik (opciono)</label>
-					<Input name="korisnik" placeholder="Ime korisnika" />
+					<Input
+						name="korisnik"
+						placeholder="Ime korisnika"
+						value={korisnik}
+						onChange={(event) => setKorisnik(event.target.value)}
+					/>
 				</div>
+
+				<label className="flex items-center gap-2 text-sm">
+					<input
+						type="checkbox"
+						checked={sendNowChecked}
+						onChange={(event) => {
+							void handleSendNowToggle(event.target.checked)
+						}}
+						disabled={sendingNow}
+						className="h-4 w-4 rounded border"
+					/>
+					<span>
+						{sendingNow
+							? "Šaljem push obavještenje..."
+							: "Pošalji push obavještenje odmah (na čekiranje)"}
+					</span>
+				</label>
 
 				<label className="flex items-center gap-2 text-sm">
 					<input
@@ -190,17 +251,7 @@ export default function DodajTransferPage() {
 						defaultChecked
 						className="h-4 w-4 rounded border"
 					/>
-					<span>Uključi alarm notifikaciju za ovaj transfer</span>
-				</label>
-
-				<label className="flex items-center gap-2 text-sm">
-					<input
-						type="checkbox"
-						name="emailEnabled"
-						defaultChecked
-						className="h-4 w-4 rounded border"
-					/>
-					<span>Pošalji email obavještenje o zakazanom transferu</span>
+					<span>Pošalji push obavještenje 1 sat prije transfera</span>
 				</label>
 
 				{error ? <p className="text-sm text-red-600">{error}</p> : null}
