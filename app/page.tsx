@@ -55,16 +55,16 @@ export default async function Home({ searchParams }: HomePageProps) {
       <TransferiToast type={toast} />
 
       <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:py-8">
-        <div className="mb-6 rounded-2xl border bg-card/80 p-4 shadow-sm backdrop-blur sm:p-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div className="space-y-1">
+        {/* <div className="mb-6 rounded-2xl border bg-card/80 p-4 shadow-sm backdrop-blur sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"> */}
+            {/* <div className="space-y-1">
               <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Transferi</h1>
               <p className="text-sm text-muted-foreground">
                 Pregled, izmjena i brisanje transfera na jednom mjestu.
               </p>
-            </div>
+            </div> */}
 
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            {/* <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <Link
                 href="/transferi/dodaj"
                 className="inline-flex h-10 items-center justify-center rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800"
@@ -78,9 +78,9 @@ export default async function Home({ searchParams }: HomePageProps) {
               >
                 Arhiva
               </Link>
-            </div>
-          </div>
-        </div>
+            </div> */}
+          {/* </div>
+        </div> */}
 
         <div className="mb-6">
           <PushReminderSetup />
@@ -130,7 +130,7 @@ export default async function Home({ searchParams }: HomePageProps) {
         </div>
 
         <div className="hidden overflow-x-auto rounded-xl border bg-card shadow-sm md:block">
-          <table className="w-full min-w-[900px] border-collapse text-sm">
+          <table className="w-full min-w-225 border-collapse text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
                 <th className="px-3 py-2">Datum</th>

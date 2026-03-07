@@ -14,6 +14,46 @@ import {
   parseTimeOnly,
 } from "@/actions/transfer-utils"
 
+function addMinutesToTime(time: Date, minutes: number): Date {
+  return new Date(time.getTime() + minutes * 60 * 1000)
+}
+
+async function assertNoTransferOverlap(
+  datum: Date,
+  vrijeme: Date,
+  excludeId?: string
+): Promise<void> {
+  const from = addMinutesToTime(vrijeme, -60)
+  const to = addMinutesToTime(vrijeme, 60)
+
+  const existing = await prisma.transfer.findFirst({
+    where: {
+      datum,
+      vrijeme: {
+        gte: from,
+        lte: to,
+      },
+      ...(excludeId
+        ? {
+          id: {
+            not: excludeId,
+          },
+        }
+        : {}),
+    },
+    orderBy: [{ vrijeme: "asc" }, { id: "asc" }],
+  })
+
+  if (!existing) {
+    return
+  }
+
+  const existingTime = existing.vrijeme.toISOString().slice(11, 16)
+  throw new Error(
+    `Postoji preklapanje transfera (+/- 1 sat) sa postojećim terminom u ${existingTime}.`
+  )
+}
+
 export async function getTransferi(): Promise<TransferRecord[]> {
   return prisma.transfer.findMany({
     orderBy: [{ datum: "desc" }, { vrijeme: "desc" }, { id: "desc" }],
@@ -34,6 +74,8 @@ export async function createTransfer(formData: FormData): Promise<TransferRecord
   const vrijeme = parseTimeOnly(getRequiredString(formData, "vrijeme"))
   const datumVrijemeUtc = combineDateAndTimeUtc(datum, vrijeme)
   const alarmEnabled = formData.get("alarmEnabled") === "on"
+
+  await assertNoTransferOverlap(datum, vrijeme)
 
   const transfer = await prisma.transfer.create({
     data: {
@@ -79,6 +121,8 @@ export async function updateTransfer(formData: FormData): Promise<TransferRecord
       : current.vrijeme
 
   const datumVrijemeUtc = combineDateAndTimeUtc(nextDatum, nextVrijeme)
+
+  await assertNoTransferOverlap(nextDatum, nextVrijeme, id)
 
   const shouldResetAlarmSentAt =
     current.datumVrijemeUtc.getTime() !== datumVrijemeUtc.getTime() ||

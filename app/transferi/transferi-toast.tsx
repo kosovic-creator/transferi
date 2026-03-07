@@ -27,6 +27,10 @@ export function TransferiToast({ type }: TransferiToastProps) {
       toast.success("Transfer je uspjesno obrisan.")
     }
 
+    if (type === "restored") {
+      toast.success("Transfer je uspjesno vracen iz arhive.")
+    }
+
     if (type === "create-error") {
       toast.error("Neuspjesno dodavanje transfera.")
     }
@@ -37,6 +41,10 @@ export function TransferiToast({ type }: TransferiToastProps) {
 
     if (type === "delete-error") {
       toast.error("Neuspjesno brisanje transfera.")
+    }
+
+    if (type === "restore-error") {
+      toast.error("Neuspjelo vracanje transfera iz arhive.")
     }
 
     lastShown.current = type

@@ -133,7 +133,7 @@ Mozes rucno testirati endpoint:
 
 ```bash
 curl -X GET http://localhost:3000/api/jobs/send-transfer-reminders \
-  -H "Authorization: Bearer <CRON_SECRET>"
+  -H "Authorization: Bearer seE7jaCATUhh2R3U5rZm52EAz6iogn+TimTzjY+ddZ8="
 ```
 
 Ili preko query parametra:

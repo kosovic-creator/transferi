@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import {
   type ArhivaQueryParams,
   type ArhivaQueryOptions,
+  getArhivaCurrentMonthSummary,
   getArhivaTransferaQuery,
   restoreTransferFromArhiva,
 } from "@/actions/arhiva-transfera"
@@ -11,6 +12,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -47,14 +49,6 @@ type ArhivaPageProps = {
   }>
 }
 
-function sanitizeReturnTo(path: string): string {
-  if (!path.startsWith("/transferi/arhiva")) {
-    return "/transferi/arhiva"
-  }
-
-  return path
-}
-
 function withPage(url: URLSearchParams, page: number): string {
   const next = new URLSearchParams(url)
   next.set("page", String(page))
@@ -80,6 +74,7 @@ function toArhivaQueryOptions(params: ArhivaQueryParams): ArhivaQueryOptions {
 export default async function ArhivaTransferaPage({ searchParams }: ArhivaPageProps) {
   const params = await searchParams
   const options: ArhivaQueryOptions = toArhivaQueryOptions(params)
+  const monthSummary = await getArhivaCurrentMonthSummary()
 
   const { query, queryError } = await (async () => {
     try {
@@ -116,23 +111,18 @@ export default async function ArhivaTransferaPage({ searchParams }: ArhivaPagePr
   baseParams.set("vrijemeSort", vrijemeSort)
   baseParams.set("pageSize", String(query.pageSize))
 
-  const returnTo = withPage(baseParams, query.page)
+  const totalIznos = query.items.reduce((sum, transfer) => sum + transfer.iznos, 0)
 
   async function handleRestore(formData: FormData) {
     "use server"
 
-    const targetRaw = formData.get("returnTo")
-    const target =
-      typeof targetRaw === "string" ? sanitizeReturnTo(targetRaw) : "/transferi/arhiva"
-
     try {
       await restoreTransferFromArhiva(formData)
-      const separator = target.includes("?") ? "&" : "?"
-      redirect(`${target}${separator}status=restored`)
     } catch {
-      const separator = target.includes("?") ? "&" : "?"
-      redirect(`${target}${separator}status=restore-error`)
+      redirect("/?toast=restore-error")
     }
+
+    redirect("/?toast=restored")
   }
 
   return (
@@ -145,6 +135,20 @@ export default async function ArhivaTransferaPage({ searchParams }: ArhivaPagePr
         >
           Nazad na transferi
         </Link>
+      </div>
+
+      <div className="mb-6 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-xl border bg-card p-4">
+          <p className="text-xs text-muted-foreground">Tekući mjesec</p>
+          <p className="mt-1 text-sm text-muted-foreground">Ukupan broj transfera</p>
+          <p className="text-2xl font-semibold">{monthSummary.totalTransfers}</p>
+        </div>
+
+        <div className="rounded-xl border bg-card p-4">
+          <p className="text-xs text-muted-foreground">Tekući mjesec</p>
+          <p className="mt-1 text-sm text-muted-foreground">Ukupan iznos</p>
+          <p className="text-2xl font-semibold">{monthSummary.totalIznos.toFixed(2)} EUR</p>
+        </div>
       </div>
 
       {params.status === "restored" ? (
@@ -297,7 +301,6 @@ export default async function ArhivaTransferaPage({ searchParams }: ArhivaPagePr
                   <TableCell className="text-right">
                     <form action={handleRestore} className="inline-flex">
                       <input type="hidden" name="id" value={transfer.id} />
-                      <input type="hidden" name="returnTo" value={returnTo} />
                       <button
                         type="submit"
                         className="inline-flex h-8 items-center rounded-md border px-3 text-xs font-medium hover:bg-muted"
@@ -310,12 +313,23 @@ export default async function ArhivaTransferaPage({ searchParams }: ArhivaPagePr
               ))
             )}
           </TableBody>
+          {query.items.length > 0 ? (
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={4} className="text-right font-semibold">
+                  Zbir prikazanih
+                </TableCell>
+                <TableCell className="font-semibold">{totalIznos.toFixed(2)}</TableCell>
+                <TableCell colSpan={2} />
+              </TableRow>
+            </TableFooter>
+          ) : null}
         </Table>
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
-          Ukupno: {query.total} | Stranica {query.page} od {query.totalPages}
+          Broj transfera za izabrani period: {query.total} | Prikazano na stranici: {query.items.length} | Stranica {query.page} od {query.totalPages}
         </p>
 
         <div className="flex items-center gap-2">

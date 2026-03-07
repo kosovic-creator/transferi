@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { Button } from "./ui/button"
+import { Input } from "./ui/input"
 
 function base64UrlToArrayBuffer(base64Url: string): ArrayBuffer {
   const padding = "=".repeat((4 - (base64Url.length % 4)) % 4)
@@ -120,31 +122,31 @@ export function PushReminderSetup() {
       <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
         <label className="grid gap-1 text-sm">
           <span className="font-medium">Korisnik</span>
-          <input
+          <Input
             value={userKey}
             onChange={(event) => setUserKey(event.target.value)}
             placeholder="Isto ime kao u transferu"
-            className="h-10 rounded-md border bg-background px-3 text-sm"
+          
           />
         </label>
 
-        <button
+        <Button
           type="button"
           onClick={enablePush}
           disabled={busy}
-          className="inline-flex h-10 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60"
+
         >
           Uključi
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
           onClick={disablePush}
           disabled={busy}
-          className="inline-flex h-10 items-center justify-center rounded-md border px-4 text-sm font-medium hover:bg-muted disabled:opacity-60"
+
         >
           Isključi
-        </button>
+        </Button>
       </div>
 
       {status ? <p className="mt-3 text-sm text-muted-foreground">{status}</p> : null}

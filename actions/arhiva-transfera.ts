@@ -42,6 +42,11 @@ export type ArhivaQueryResult = {
   totalPages: number
 }
 
+export type ArhivaMonthlySummary = {
+  totalTransfers: number
+  totalIznos: number
+}
+
 type ArhivaWhere = {
   korisnik?: { contains: string; mode: "insensitive" }
   relacija?: RelacijaValue
@@ -136,6 +141,28 @@ export async function getArhivaTransferaQuery(
     page: query.page,
     pageSize: query.pageSize,
     totalPages,
+  }
+}
+
+export async function getArhivaCurrentMonthSummary(): Promise<ArhivaMonthlySummary> {
+  const now = new Date()
+  const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
+  const startOfNextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1))
+
+  const aggregate = await prisma.arhivaTransfera.aggregate({
+    _count: { _all: true },
+    _sum: { iznos: true },
+    where: {
+      datum: {
+        gte: startOfMonth,
+        lt: startOfNextMonth,
+      },
+    },
+  })
+
+  return {
+    totalTransfers: aggregate._count._all,
+    totalIznos: aggregate._sum.iznos ?? 0,
   }
 }
 
