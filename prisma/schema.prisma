@@ -5,10 +5,35 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Relacija {
+  APARTMAN_AERODROM @map("apartman-aerodrom")
+  AERODROM_APARTMAN @map("aerodrom-apartman")
+}
+
+model Transfer {
+  id       String   @id @default(uuid())
+  relacija Relacija
+  ostaleRelacije String?
+  iznos    Float    @default(20.0)
+  datum    DateTime @db.Date
+  vrijeme  DateTime @db.Time(0)
+  korisnik String?
+
+}
+
+model ArhivaTransfera {
+  id       String   @id @default(uuid())
+  relacija Relacija
+  ostaleRelacije String?
+  iznos    Float    @default(20.0)
+  datum    DateTime @db.Date
+  vrijeme  DateTime @db.Time(0)
+  korisnik String?
 }
