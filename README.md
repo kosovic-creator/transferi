@@ -29,8 +29,24 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Push alarm podsjetnici
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Aplikacija podržava mobilne push podsjetnike koji šalju notifikaciju u vrijeme transfera.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Brzi početak
+
+1. Generiši VAPID ključeve:
+   ```bash
+   npm run generate-vapid
+   ```
+
+2. Popuni `.env` sa potrebnim varijablama (vidi `.env.example`)
+
+3. Primijeni migraciju:
+   ```bash
+   npx prisma migrate deploy
+   ```
+
+4. Deploy na Vercel (automatski postavlja cron iz `vercel.json`)
+
+**Detaljno objašnjenje setup-a:** [SETUP_ALARMI.md](./SETUP_ALARMI.md)

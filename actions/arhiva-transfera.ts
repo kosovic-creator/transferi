@@ -164,6 +164,9 @@ export async function restoreTransferFromArhiva(
         iznos: archived.iznos,
         datum: archived.datum,
         vrijeme: archived.vrijeme,
+        datumVrijemeUtc: archived.datumVrijemeUtc,
+        alarmEnabled: archived.alarmEnabled,
+        alarmSentAt: archived.alarmSentAt,
         korisnik: archived.korisnik,
       },
     })

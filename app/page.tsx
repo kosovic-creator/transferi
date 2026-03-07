@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import { deleteTransfer, getTransferi } from "@/actions/transferi"
 import { DeleteTransferDialog } from "@/app/transferi/delete-transfer-dialog"
 import { TransferiToast } from "@/app/transferi/transferi-toast"
+import { PushReminderSetup } from "@/components/push-reminder-setup"
 
 export const dynamic = "force-dynamic"
 
@@ -79,6 +80,10 @@ export default async function Home({ searchParams }: HomePageProps) {
               </Link>
             </div>
           </div>
+        </div>
+
+        <div className="mb-6">
+          <PushReminderSetup />
         </div>
 
         {transferi.length === 0 ? (

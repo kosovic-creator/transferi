@@ -144,6 +144,16 @@ export default function DodajTransferPage() {
 					<Input name="korisnik" placeholder="Ime korisnika" />
 				</div>
 
+				<label className="flex items-center gap-2 text-sm">
+					<input
+						type="checkbox"
+						name="alarmEnabled"
+						defaultChecked
+						className="h-4 w-4 rounded border"
+					/>
+					<span>Uključi alarm notifikaciju za ovaj transfer</span>
+				</label>
+
 				{error ? <p className="text-sm text-red-600">{error}</p> : null}
 
 				<SubmitButton />

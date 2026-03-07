@@ -59,6 +59,23 @@ export function parseTimeOnly(value: Date | string): Date {
   return time
 }
 
+export function combineDateAndTimeUtc(datum: Date, vrijeme: Date): Date {
+  if (Number.isNaN(datum.getTime()) || Number.isNaN(vrijeme.getTime())) {
+    throw new Error("Neispravan datum ili vrijeme.")
+  }
+
+  return new Date(
+    Date.UTC(
+      datum.getUTCFullYear(),
+      datum.getUTCMonth(),
+      datum.getUTCDate(),
+      vrijeme.getUTCHours(),
+      vrijeme.getUTCMinutes(),
+      vrijeme.getUTCSeconds()
+    )
+  )
+}
+
 export function parseRelacija(rawValue: string): RelacijaValue {
   if (rawValue === "APARTMAN_AERODROM" || rawValue === "apartman-aerodrom") {
     return "APARTMAN_AERODROM"
