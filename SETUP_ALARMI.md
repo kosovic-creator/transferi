@@ -68,10 +68,10 @@ jednom dnevno (Hobby limit).
 
 ### Vazno za Vercel Hobby
 
-Na Hobby planu Vercel ne dozvoljava cron na svake minute. Zato je preporuka:
+Na Hobby planu Vercel ne dozvoljava cron na svake minute i nema preciznost u sat. Zato je preporuka:
 
-1. Vercel cron koristi se kao dnevni fallback.
-2. Za alarm u realnom vremenu koristi eksterni scheduler (npr. cron-job.org, EasyCron, GitHub Actions) na svakih 1 minut.
+1. Vercel cron koristi se kao dnevni fallback (ne oslanjaj se na njega za "tačno 1 sat prije").
+2. Za alarm u realnom vremenu koristi eksterni scheduler (npr. cron-job.org, EasyCron, GitHub Actions) na svakih 1-5 minuta.
 
 Primjer URL-a za eksterni scheduler:
 
@@ -93,7 +93,7 @@ Authorization: Bearer <CRON_SECRET>
 
 1. Otvori aplikaciju u browseru (Chrome/Safari).
 2. Idi na početnu stranicu.
-3. U sekciji "Alarm na telefonu" unesi **korisnika** (isto ime kao što koristiš u transferu).
+3. U sekciji "Alarm na telefonu" (opciono) unesi **korisnika** ako želiš ciljanje po imenu.
 4. Klikni **Uključi**.
 5. Dozvoli notifikacije kada browser traži dozvolu.
 6. Poruka: "Podsetnici su uključeni za ovaj telefon."
@@ -101,14 +101,14 @@ Authorization: Bearer <CRON_SECRET>
 ### Kreiraj transfer sa alarmom
 
 1. Dodaj novi transfer.
-2. Postavi vreme na +2 minuta od trenutka (npr. ako je 14:30, postavi 14:32).
+2. Postavi vreme transfera na oko +60 minuta od trenutka.
 3. Uključi checkbox "Uključi alarm notifikaciju za ovaj transfer".
 4. Sačuvaj.
 
 ### Provera da li radi
 
-1. Čekaj da dođe vreme transfera.
-2. Notifikacija treba da stigne na telefon sa zvukom.
+1. Pokreni scheduler poziv (ili sačekaj eksterni scheduler interval).
+2. Notifikacija treba da stigne kad transfer uđe u 1h prozor (u praksi oko 55-65 min prije transfera).
 3. Klikom na notifikaciju otvoriće se transfer u browseru.
 
 ## 5. Napomene za produkciju
@@ -185,9 +185,9 @@ Odgovor bi trebao biti:
 
 ### Notifikacija ne stiže
 - Proveri da li je `alarmEnabled` true u bazi za taj transfer.
-- Proveri da li je `datumVrijemeUtc` <= trenutno vreme (UTC).
+- Proveri da li transfer upada u prozor za slanje (oko `now + 60min`, tolerancija +/- 5min).
 - Proveri da li je `alarmSentAt` NULL.
-- Proveri da li postoji PushSubscription za tog korisnika.
+- Proveri da li postoji barem jedan `PushSubscription` (po korisniku ili global fallback).
 
 ### Browser ne podržava notifikacije
 - Prikaži poruku "Ovaj browser ne podržava push notifikacije".
