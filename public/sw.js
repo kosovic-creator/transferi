@@ -7,8 +7,8 @@ self.addEventListener("push", (event) => {
     data: {
       url: payload.url || "/",
     },
-    badge: "/favicon.svg",
-    icon: "/favicon.svg",
+    badge: "/apple-touch-icon.png",
+    icon: "/apple-touch-icon.png",
   }
 
   event.waitUntil(self.registration.showNotification(title, options))
