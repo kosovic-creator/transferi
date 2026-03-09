@@ -15,6 +15,8 @@ import {
 } from "@/actions/transfer-utils"
 import { sendTransferReceivedSms, type SmsSendResult } from "@/lib/twilio-sms"
 
+const DRIVER_SMS_NUMBER = "+38267135355"
+
 function addMinutesToTime(time: Date, minutes: number): Date {
   return new Date(time.getTime() + minutes * 60 * 1000)
 }
@@ -107,20 +109,13 @@ type CreateTransferResult =
 export async function createTransferSafe(formData: FormData): Promise<CreateTransferResult> {
   try {
     const transfer = await createTransfer(formData)
-    let sms: SmsSendResult = {
-      status: "skipped",
-      reason: "Broj telefona nije unesen.",
-    }
-
-    if (transfer.brojTelefona) {
-      sms = await sendTransferReceivedSms({
-        to: transfer.brojTelefona,
-        transferId: transfer.id,
-        relacija: transfer.relacija,
-        datum: transfer.datum,
-        vrijeme: transfer.vrijeme,
-      })
-    }
+    const sms = await sendTransferReceivedSms({
+      to: DRIVER_SMS_NUMBER,
+      transferId: transfer.id,
+      relacija: transfer.relacija,
+      datum: transfer.datum,
+      vrijeme: transfer.vrijeme,
+    })
 
     return { ok: true, transfer, sms }
   } catch (error) {

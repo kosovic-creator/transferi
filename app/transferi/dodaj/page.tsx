@@ -45,9 +45,6 @@ export default function DodajTransferPage() {
 	const [sat, setSat] = useState("")
 	const [minuta, setMinuta] = useState("")
 	const [korisnik, setKorisnik] = useState("")
-	const [brojTelefona, setBrojTelefona] = useState("")
-	const [sendNowChecked, setSendNowChecked] = useState(false)
-	const [sendingNow, setSendingNow] = useState(false)
 	const today = useMemo(() => {
 		const now = new Date()
 		now.setHours(0, 0, 0, 0)
@@ -77,41 +74,6 @@ export default function DodajTransferPage() {
 		return Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, "0"))
 	}, [])
 
-	async function handleSendNowToggle(checked: boolean) {
-		setSendNowChecked(checked)
-
-		if (!checked) {
-			return
-		}
-
-		try {
-			setSendingNow(true)
-			const response = await fetch("/api/push/send-now", {
-				method: "POST",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({
-					userKey: korisnik.trim(),
-					relacija,
-					datum: datumString,
-					vrijeme: vrijemeString,
-				}),
-			})
-
-			const data = (await response.json()) as { error?: string; sentCount?: number }
-			if (!response.ok) {
-				throw new Error(data.error ?? "Greška pri slanju push obavještenja.")
-			}
-
-			toast.success(`Push obavještenje poslato (${data.sentCount ?? 0}).`)
-		} catch (e) {
-			const message = e instanceof Error ? e.message : "Greška pri slanju push obavještenja."
-			toast.error(message)
-		} finally {
-			setSendingNow(false)
-			setSendNowChecked(false)
-		}
-	}
-
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col px-4 py-10">
 			<div className="mb-8 space-y-2">
@@ -139,10 +101,9 @@ export default function DodajTransferPage() {
 					setSat("")
 					setMinuta("")
 					setKorisnik("")
-					setBrojTelefona("")
 
 					if (result.sms.status === "sent") {
-						toast.success("SMS potvrda je poslata.")
+						toast.success("SMS vozaču je poslat.")
 					}
 
 					if (result.sms.status === "failed") {
@@ -175,8 +136,8 @@ export default function DodajTransferPage() {
 				</div>
 
 				<div className="space-y-2">
-					<label className="text-sm font-medium">Ostale relacije (opciono)</label>
-					<Input name="ostaleRelacije" placeholder="Npr. grad-hotel" />
+					<label className="text-sm font-medium">Broj leta ili odakle dolazi </label>
+					<Input name="ostaleRelacije" placeholder="Npr. broj leta ili odakle dolazi" />
 				</div>
 
 				<div className="space-y-2">
@@ -192,7 +153,7 @@ export default function DodajTransferPage() {
 
 				<div className="space-y-2">
 					<label className="text-sm font-medium">Vrijeme</label>
-					<div className="flex gap-2">
+					<div className="grid grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
 						<Select value={sat} onValueChange={(value) => setSat(value ?? "")}>
 							<SelectTrigger className="w-full">
 								<SelectValue placeholder="Sat" />
@@ -205,7 +166,7 @@ export default function DodajTransferPage() {
 								))}
 							</SelectContent>
 						</Select>
-						<span className="flex items-center text-lg">:</span>
+						<span className="hidden items-center justify-center text-lg sm:flex">:</span>
 						<Select value={minuta} onValueChange={(value) => setMinuta(value ?? "")}>
 							<SelectTrigger className="w-full">
 								<SelectValue placeholder="Minuta" />
@@ -227,7 +188,7 @@ export default function DodajTransferPage() {
 				</div>
 
 				<div className="space-y-2">
-					<label className="text-sm font-medium">Korisnik (opciono)</label>
+					<label className="text-sm font-medium">Korisnik * </label>
 					<Input
 						name="korisnik"
 						placeholder="Ime korisnika"
@@ -236,7 +197,7 @@ export default function DodajTransferPage() {
 					/>
 				</div>
 
-				<div className="space-y-2">
+				{/* <div className="space-y-2">
 					<label className="text-sm font-medium">Broj telefona (opciono)</label>
 					<Input
 						name="brojTelefona"
@@ -244,26 +205,9 @@ export default function DodajTransferPage() {
 						value={brojTelefona}
 						onChange={(event) => setBrojTelefona(event.target.value)}
 					/>
-				</div>
+				</div> */}
 
-				<label className="flex items-center gap-2 text-sm">
-					<input
-						type="checkbox"
-						checked={sendNowChecked}
-						onChange={(event) => {
-							void handleSendNowToggle(event.target.checked)
-						}}
-						disabled={sendingNow}
-						className="h-4 w-4 rounded border"
-					/>
-					<span>
-						{sendingNow
-							? "Šaljem push obavještenje..."
-							: "Pošalji push obavještenje odmah (na čekiranje)"}
-					</span>
-				</label>
-
-				<label className="flex items-center gap-2 text-sm">
+				{/* <label className="flex items-center gap-2 text-sm">
 					<input
 						type="checkbox"
 						name="alarmEnabled"
@@ -271,7 +215,7 @@ export default function DodajTransferPage() {
 						className="h-4 w-4 rounded border"
 					/>
 					<span>Pošalji push obavještenje 1 sat prije transfera</span>
-				</label>
+				</label> */}
 
 				{error ? <p className="text-sm text-red-600">{error}</p> : null}
 

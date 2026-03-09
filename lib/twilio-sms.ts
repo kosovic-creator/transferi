@@ -71,7 +71,7 @@ export async function sendTransferReceivedSms(
 
   const client = twilio(accountSid, authToken)
   const body = [
-    "Tvoj zahtjev za transfer je uspjesno primljen.",
+    "Novi transfer je sačuvan.",
     `Relacija: ${relacijaToValue(input.relacija)}`,
     `Termin: ${formatDateDisplay(input.datum)} ${formatTimeDisplay(input.vrijeme)}`,
     `ID: ${input.transferId}`,
