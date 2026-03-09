@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { ChatAdminToggle } from "@/components/chat-admin-toggle"
 
 const navItems = [
 //   { href: "/", label: "Početna" },
@@ -28,6 +29,7 @@ export function SiteNavbar() {
         </Link>
 
         <nav className="flex items-center gap-2 sm:gap-3">
+          <ChatAdminToggle />
           {navItems.map((item) => (
             <Link
               key={item.href}

@@ -50,3 +50,43 @@ Aplikacija podržava mobilne push podsjetnike koji šalju notifikaciju u vrijeme
 4. Deploy na Vercel (automatski postavlja cron iz `vercel.json`)
 
 **Detaljno objašnjenje setup-a:** [SETUP_ALARMI.md](./SETUP_ALARMI.md)
+
+## Online chat podrska (Crisp)
+
+Aplikacija podrzava online chat widget za komunikaciju sa potencijalnim korisnicima.
+
+### Aktivacija
+
+1. Kreiraj nalog na [Crisp](https://crisp.chat) i kopiraj Website ID.
+2. Dodaj varijable u `.env`:
+
+```bash
+NEXT_PUBLIC_CRISP_WEBSITE_ID=your_crisp_website_id
+NEXT_PUBLIC_CHAT_ALLOWED_ROUTES=/,/transferi/*
+NEXT_PUBLIC_CHAT_OPERATOR_NAME=Marko (Transferi)
+NEXT_PUBLIC_CHAT_INITIAL_MESSAGE=Pozdrav! Ja sam Marko. Kako mogu da pomognem?
+NEXT_PUBLIC_SUPPORT_PHONE=+38267123456
+NEXT_PUBLIC_WHATSAPP_NUMBER=38267123456
+```
+
+3. Restartuj razvojni server (`npm run dev`).
+
+Ako `NEXT_PUBLIC_CRISP_WEBSITE_ID` nije postavljen, chat widget se ne prikazuje.
+
+### Podesavanja
+
+- `NEXT_PUBLIC_CHAT_ALLOWED_ROUTES`: ruta/rute gdje se chat prikazuje, odvojene zarezom.
+- Primjeri: `/` (samo pocetna), `/transferi/*` (sve ispod transferi), `/,/transferi/dodaj`.
+- `NEXT_PUBLIC_CHAT_OPERATOR_NAME`: ime koje se koristi u chat kontekstu i porukama.
+- `NEXT_PUBLIC_CHAT_INITIAL_MESSAGE`: inicijalni tekst na srpskom koji se priprema korisniku.
+- `NEXT_PUBLIC_SUPPORT_PHONE` i `NEXT_PUBLIC_WHATSAPP_NUMBER`: fallback dugmad `Pozovi / WhatsApp` kada Crisp prijavi da operater nije online.
+
+### Admin toggle u UI
+
+- U navbaru na `/transferi` stranicama postoji dugme `Chat: ukljucen/iskljucen`.
+- Klik menja globalno stanje chata u bazi, bez izmjene `.env` fajla.
+- Potrebno je primijeniti novu migraciju prije koriscenja:
+
+```bash
+npx prisma migrate deploy
+```

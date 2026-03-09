@@ -4,6 +4,7 @@ import "./globals.css";
 import { AppToaster } from "@/components/ui/toaster";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavbar } from "@/components/site-navbar";
+import { ChatSupportWidget } from "@/components/chat-support-widget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({
           <SiteFooter />
         </div>
         <AppToaster />
+        <ChatSupportWidget />
       </body>
     </html>
   );
