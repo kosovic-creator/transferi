@@ -276,7 +276,7 @@ export default async function ArhivaTransferaPage({ searchParams }: ArhivaPagePr
               <TableHead>Datum</TableHead>
               <TableHead>Vrijeme</TableHead>
               <TableHead>Relacija</TableHead>
-              <TableHead>Ostale relacije</TableHead>
+              <TableHead>Broj leta / odakle dolazi</TableHead>
               <TableHead>Iznos</TableHead>
               <TableHead>Korisnik</TableHead>
               <TableHead>Telefon</TableHead>
@@ -296,7 +296,7 @@ export default async function ArhivaTransferaPage({ searchParams }: ArhivaPagePr
                   <TableCell>{formatDateDisplay(transfer.datum)}</TableCell>
                   <TableCell>{formatTimeDisplay(transfer.vrijeme)}</TableCell>
                   <TableCell>{relacijaToValue(transfer.relacija)}</TableCell>
-                  <TableCell>{transfer.ostaleRelacije ?? "-"}</TableCell>
+                  <TableCell>{transfer.brojLetaNapomena ?? "-"}</TableCell>
                   <TableCell>{transfer.iznos.toFixed(2)}</TableCell>
                   <TableCell>{transfer.korisnik ?? "-"}</TableCell>
                   <TableCell>{transfer.brojTelefona ?? "-"}</TableCell>

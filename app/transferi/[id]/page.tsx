@@ -101,10 +101,11 @@ export default async function TransferEditPage({ params }: TransferEditPageProps
         </label>
 
         <label className="grid gap-1">
-          <span className="text-sm font-medium">Ostale relacije</span>
+          <span className="text-sm font-medium">Broj leta ili odakle dolazi *</span>
           <input
-            name="ostaleRelacije"
-            defaultValue={transfer.ostaleRelacije ?? ""}
+            name="brojLetaNapomena"
+            defaultValue={transfer.brojLetaNapomena ?? ""}
+            required
             className="h-10 rounded-md border bg-background px-3 text-sm"
           />
         </label>
@@ -168,16 +169,17 @@ export default async function TransferEditPage({ params }: TransferEditPageProps
           </label>
 
           <label className="grid gap-1">
-            <span className="text-sm font-medium">Korisnik</span>
+            <span className="text-sm font-medium">Korisnik *</span>
             <input
               name="korisnik"
               defaultValue={transfer.korisnik ?? ""}
+              required
               className="h-10 rounded-md border bg-background px-3 text-sm"
             />
           </label>
 
           <label className="grid gap-1 sm:col-span-2">
-            <span className="text-sm font-medium">Broj telefona</span>
+            <span className="text-sm font-medium">Telefon korisnika (opciono)</span>
             <input
               name="brojTelefona"
               defaultValue={transfer.brojTelefona ?? ""}

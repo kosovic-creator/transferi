@@ -15,8 +15,6 @@ import {
 } from "@/actions/transfer-utils"
 import { sendTransferReceivedSms, type SmsSendResult } from "@/lib/twilio-sms"
 
-const DRIVER_SMS_NUMBER = "+38267135355"
-
 function addMinutesToTime(time: Date, minutes: number): Date {
   return new Date(time.getTime() + minutes * 60 * 1000)
 }
@@ -84,13 +82,13 @@ export async function createTransfer(formData: FormData): Promise<TransferRecord
   const transfer = await prisma.transfer.create({
     data: {
       relacija,
-      ostaleRelacije: getOptionalString(formData, "ostaleRelacije"),
+      brojLetaNapomena: getRequiredString(formData, "brojLetaNapomena"),
       iznos: getOptionalNumber(formData, "iznos"),
       datum,
       vrijeme,
       datumVrijemeUtc,
       alarmEnabled,
-      korisnik: getOptionalString(formData, "korisnik"),
+      korisnik: getRequiredString(formData, "korisnik"),
       brojTelefona: getOptionalString(formData, "brojTelefona"),
     },
   })
@@ -110,11 +108,12 @@ export async function createTransferSafe(formData: FormData): Promise<CreateTran
   try {
     const transfer = await createTransfer(formData)
     const sms = await sendTransferReceivedSms({
-      to: DRIVER_SMS_NUMBER,
       transferId: transfer.id,
       relacija: transfer.relacija,
       datum: transfer.datum,
       vrijeme: transfer.vrijeme,
+      korisnik: transfer.korisnik ?? "-",
+      brojLetaNapomena: transfer.brojLetaNapomena ?? "-",
     })
 
     return { ok: true, transfer, sms }
@@ -179,8 +178,8 @@ export async function updateTransfer(formData: FormData): Promise<TransferRecord
         typeof rawRelacija === "string" && rawRelacija.trim()
           ? parseRelacija(rawRelacija.trim())
           : undefined,
-      ostaleRelacije: formData.has("ostaleRelacije")
-        ? getOptionalString(formData, "ostaleRelacije")
+      brojLetaNapomena: formData.has("brojLetaNapomena")
+        ? getRequiredString(formData, "brojLetaNapomena")
         : undefined,
       iznos: getOptionalNumber(formData, "iznos"),
       datum: nextDatum,
@@ -189,7 +188,7 @@ export async function updateTransfer(formData: FormData): Promise<TransferRecord
       alarmEnabled,
       alarmSentAt: shouldResetAlarmSentAt ? null : undefined,
       korisnik: formData.has("korisnik")
-        ? getOptionalString(formData, "korisnik")
+        ? getRequiredString(formData, "korisnik")
         : undefined,
       brojTelefona: formData.has("brojTelefona")
         ? getOptionalString(formData, "brojTelefona")
@@ -214,7 +213,7 @@ export async function deleteTransfer(formData: FormData): Promise<TransferRecord
       data: {
         id: deleted.id,
         relacija: deleted.relacija,
-        ostaleRelacije: deleted.ostaleRelacije,
+        brojLetaNapomena: deleted.brojLetaNapomena,
         iznos: deleted.iznos,
         datum: deleted.datum,
         vrijeme: deleted.vrijeme,

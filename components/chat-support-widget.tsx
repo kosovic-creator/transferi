@@ -15,7 +15,8 @@ declare global {
 }
 
 const crispWebsiteId = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID?.trim()
-const chatAllowedRoutesRaw = process.env.NEXT_PUBLIC_CHAT_ALLOWED_ROUTES ?? "/"
+const mandatoryChatRoutes = ["/", "/transferi/*"]
+const chatAllowedRoutesRaw = process.env.NEXT_PUBLIC_CHAT_ALLOWED_ROUTES ?? ""
 const supportPhone = process.env.NEXT_PUBLIC_SUPPORT_PHONE?.trim() ?? ""
 const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.trim() ?? ""
 const operatorName =
@@ -62,7 +63,10 @@ export function ChatSupportWidget() {
   const [isOnline, setIsOnline] = useState<boolean | null>(null)
   const hasInitializedCrisp = useRef(false)
   const routeMatchers = useMemo(
-    () => normalizeRouteMatchers(chatAllowedRoutesRaw),
+    () => {
+      const fromEnv = normalizeRouteMatchers(chatAllowedRoutesRaw)
+      return Array.from(new Set([...mandatoryChatRoutes, ...fromEnv]))
+    },
     []
   )
 

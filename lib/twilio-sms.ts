@@ -1,17 +1,36 @@
 import twilio from "twilio"
 
 type SendTransferReceivedSmsInput = {
-  to: string
   transferId: string
   relacija: "APARTMAN_AERODROM" | "AERODROM_APARTMAN"
   datum: Date
   vrijeme: Date
+  korisnik: string
+  brojLetaNapomena: string
 }
 
+const DRIVER_SMS_NUMBER = "+38267135355"
+
 export type SmsSendResult =
-  | { status: "sent"; sid: string }
+  | {
+    status: "sent"
+    sid: string
+    to: string
+    twilioStatus: string
+    errorCode?: number | null
+    errorMessage?: string | null
+  }
   | { status: "skipped"; reason: string }
   | { status: "failed"; error: string }
+
+const TERMINAL_FAILURE_STATUSES = new Set(["failed", "undelivered", "canceled"])
+const TERMINAL_SUCCESS_STATUSES = new Set(["delivered"])
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
+}
 
 function formatDateDisplay(date: Date): string {
   const day = String(date.getUTCDate()).padStart(2, "0")
@@ -34,6 +53,15 @@ function relacijaToValue(relacija: "APARTMAN_AERODROM" | "AERODROM_APARTMAN"): s
   }
 
   return "aerodrom-apartman"
+}
+
+function compactText(value: string, maxLen: number): string {
+  const normalized = value.replace(/\s+/g, " ").trim()
+  if (normalized.length <= maxLen) {
+    return normalized
+  }
+
+  return `${normalized.slice(0, Math.max(0, maxLen - 1))}…`
 }
 
 function normalizePhoneNumber(rawValue: string): string {
@@ -60,7 +88,7 @@ export async function sendTransferReceivedSms(
     }
   }
 
-  const to = normalizePhoneNumber(input.to)
+  const to = normalizePhoneNumber(DRIVER_SMS_NUMBER)
 
   if (!to.startsWith("+")) {
     return {
@@ -70,12 +98,14 @@ export async function sendTransferReceivedSms(
   }
 
   const client = twilio(accountSid, authToken)
-  const body = [
-    "Novi transfer je sačuvan.",
-    `Relacija: ${relacijaToValue(input.relacija)}`,
-    `Termin: ${formatDateDisplay(input.datum)} ${formatTimeDisplay(input.vrijeme)}`,
-    `ID: ${input.transferId}`,
-  ].join("\n")
+  const korisnikShort = compactText(input.korisnik, 22)
+  const letShort = compactText(input.brojLetaNapomena, 18)
+  const relacijaShort = relacijaToValue(input.relacija)
+    .replace("apartman-aerodrom", "A->AP")
+    .replace("aerodrom-apartman", "AP->A")
+
+  // Keep body concise to avoid Twilio trial segment-length rejection (error 30044).
+  const body = `Transfer ${formatDateDisplay(input.datum)} ${formatTimeDisplay(input.vrijeme)} | ${relacijaShort} | Kor:${korisnikShort} | Let:${letShort}`
 
   try {
     const message = await client.messages.create({
@@ -84,7 +114,43 @@ export async function sendTransferReceivedSms(
       body,
     })
 
-    return { status: "sent", sid: message.sid }
+    let latestStatus = String(message.status ?? "unknown")
+    let latestErrorCode: number | null | undefined = message.errorCode
+    let latestErrorMessage: string | null | undefined = message.errorMessage
+
+    // Twilio often returns queued/accepted initially; poll briefly for a more final state.
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      if (
+        TERMINAL_FAILURE_STATUSES.has(latestStatus) ||
+        TERMINAL_SUCCESS_STATUSES.has(latestStatus)
+      ) {
+        break
+      }
+
+      await sleep(1000)
+      const refreshed = await client.messages(message.sid).fetch()
+      latestStatus = String(refreshed.status ?? latestStatus)
+      latestErrorCode = refreshed.errorCode
+      latestErrorMessage = refreshed.errorMessage
+    }
+
+    if (TERMINAL_FAILURE_STATUSES.has(latestStatus)) {
+      const code = latestErrorCode ? ` (kod ${latestErrorCode})` : ""
+      const details = latestErrorMessage ? ` - ${latestErrorMessage}` : ""
+      return {
+        status: "failed",
+        error: `Twilio status: ${latestStatus}${code}${details}`,
+      }
+    }
+
+    return {
+      status: "sent",
+      sid: message.sid,
+      to,
+      twilioStatus: latestStatus,
+      errorCode: latestErrorCode,
+      errorMessage: latestErrorMessage,
+    }
   } catch (error) {
     return {
       status: "failed",

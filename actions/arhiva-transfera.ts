@@ -187,7 +187,7 @@ export async function restoreTransferFromArhiva(
       data: {
         id: archived.id,
         relacija: archived.relacija,
-        ostaleRelacije: archived.ostaleRelacije,
+        brojLetaNapomena: archived.brojLetaNapomena,
         iznos: archived.iznos,
         datum: archived.datum,
         vrijeme: archived.vrijeme,

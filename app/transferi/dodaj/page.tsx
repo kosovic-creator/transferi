@@ -103,7 +103,13 @@ export default function DodajTransferPage() {
 					setKorisnik("")
 
 					if (result.sms.status === "sent") {
-						toast.success("SMS vozaču je poslat.")
+						toast.success(
+							`SMS zahtjev je prihvaćen za ${result.sms.to} (Twilio: ${result.sms.twilioStatus}).`
+						)
+					}
+
+					if (result.sms.status === "skipped") {
+						toast.error(`SMS nije poslat: ${result.sms.reason}`)
 					}
 
 					if (result.sms.status === "failed") {
@@ -136,8 +142,12 @@ export default function DodajTransferPage() {
 				</div>
 
 				<div className="space-y-2">
-					<label className="text-sm font-medium">Broj leta ili odakle dolazi </label>
-					<Input name="ostaleRelacije" placeholder="Npr. broj leta ili odakle dolazi" />
+					<label className="text-sm font-medium">Broj leta ili odakle dolazi *</label>
+					<Input
+						name="brojLetaNapomena"
+						placeholder="Npr. broj leta ili odakle dolazi"
+						required
+					/>
 				</div>
 
 				<div className="space-y-2">
@@ -188,24 +198,20 @@ export default function DodajTransferPage() {
 				</div>
 
 				<div className="space-y-2">
-					<label className="text-sm font-medium">Korisnik * </label>
+					<label className="text-sm font-medium">Korisnik *</label>
 					<Input
 						name="korisnik"
 						placeholder="Ime korisnika"
 						value={korisnik}
 						onChange={(event) => setKorisnik(event.target.value)}
+						required
 					/>
 				</div>
 
-				{/* <div className="space-y-2">
-					<label className="text-sm font-medium">Broj telefona (opciono)</label>
-					<Input
-						name="brojTelefona"
-						placeholder="npr. +38269111222"
-						value={brojTelefona}
-						onChange={(event) => setBrojTelefona(event.target.value)}
-					/>
-				</div> */}
+				<div className="space-y-2">
+					<label className="text-sm font-medium">Telefon korisnika (opciono)</label>
+					<Input name="brojTelefona" placeholder="npr. +38269111222" />
+				</div>
 
 				{/* <label className="flex items-center gap-2 text-sm">
 					<input
