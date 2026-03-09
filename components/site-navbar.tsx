@@ -27,7 +27,9 @@ export function SiteNavbar() {
         <Link href="/" className="text-sm font-semibold tracking-wide sm:text-base">
           Transferi
         </Link>
-
+        <Link href="/admin/push?key=drasko" className="text-sm font-semibold tracking-wide sm:text-base">
+          Admin Push Setup
+        </Link>
         <nav className="flex items-center gap-2 sm:gap-3">
           <ChatAdminToggle />
           {navItems.map((item) => (
