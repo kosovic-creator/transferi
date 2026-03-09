@@ -131,6 +131,43 @@ export function PushReminderSetup() {
     }
   }
 
+  async function testLocalNotification() {
+    try {
+      setBusy(true)
+      setStatus(null)
+
+      if (!("serviceWorker" in navigator) || !("Notification" in window)) {
+        setStatus("Ovaj browser ne podržava lokalni test notifikacije.")
+        return
+      }
+
+      const permission = await Notification.requestPermission()
+
+      if (permission !== "granted") {
+        setStatus("Notifikacije nisu dozvoljene na ovom uređaju.")
+        return
+      }
+
+      await navigator.serviceWorker.register("/sw.js")
+      const registration = await navigator.serviceWorker.ready
+
+      await registration.showNotification("Lokalni test notifikacije", {
+        body: "Ako vidiš ovo, uređaj i dozvole su ispravni.",
+        icon: "/apple-touch-icon.png",
+        badge: "/apple-touch-icon.png",
+        data: {
+          url: "/",
+        },
+      })
+
+      setStatus("Lokalni test je poslat. Ako nema bannera, problem je na telefonu/dozvolama.")
+    } catch {
+      setStatus("Lokalni test nije uspio.")
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
     <section className="rounded-xl border bg-card p-4 shadow-sm">
       <h2 className="text-base font-semibold">Alarm na telefonu</h2>
@@ -141,7 +178,7 @@ export function PushReminderSetup() {
         iPhone: push radi iz instalirane Home Screen aplikacije, ne iz običnog Safari taba.
       </p>
 
-      <div className="mt-3 grid gap-3 sm:grid-cols-[auto_auto] sm:items-end">
+      <div className="mt-3 grid gap-3 sm:grid-cols-[auto_auto_auto] sm:items-end">
 
         <Button
           type="button"
@@ -159,6 +196,15 @@ export function PushReminderSetup() {
 
         >
           Isključi
+        </Button>
+
+        <Button
+          type="button"
+          onClick={testLocalNotification}
+          disabled={busy}
+          variant="outline"
+        >
+          Lokalni test
         </Button>
       </div>
 

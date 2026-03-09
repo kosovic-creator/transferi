@@ -40,5 +40,8 @@ export async function sendWebPush(
 ): Promise<void> {
   ensureConfigured()
 
-  await webpush.sendNotification(subscription, JSON.stringify(payload))
+  await webpush.sendNotification(subscription, JSON.stringify(payload), {
+    TTL: 60,
+    urgency: "high",
+  })
 }
