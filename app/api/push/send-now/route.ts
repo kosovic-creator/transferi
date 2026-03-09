@@ -5,6 +5,8 @@ import { sendWebPush } from "@/lib/web-push"
 
 export const runtime = "nodejs"
 
+const ADMIN_PUSH_USER_KEY = "admin"
+
 type SendNowRequest = {
   userKey?: string
   relacija?: string
@@ -23,25 +25,21 @@ function isPushSubscriptionExpired(error: unknown): boolean {
 
 export async function POST(request: Request) {
   const body = (await request.json()) as SendNowRequest
-  const userKey = body.userKey?.trim()
+  const userKey = body.userKey?.trim() || ADMIN_PUSH_USER_KEY
 
-  const subscriptions = userKey
-    ? await prisma.pushSubscription.findMany({
-      where: {
-        userKey: {
-          equals: userKey,
-          mode: "insensitive",
-        },
+  const subscriptions = await prisma.pushSubscription.findMany({
+    where: {
+      userKey: {
+        equals: userKey,
+        mode: "insensitive",
       },
-    })
-    : await prisma.pushSubscription.findMany()
+    },
+  })
 
   if (subscriptions.length === 0) {
     return NextResponse.json(
       {
-        error: userKey
-          ? "Nema aktivnih push pretplata za ovog korisnika."
-          : "Nema aktivnih push pretplata za slanje notifikacije.",
+        error: "Nema aktivnih push pretplata za ovog korisnika.",
       },
       { status: 404 }
     )
@@ -96,7 +94,7 @@ export async function POST(request: Request) {
         failedCount,
         removedExpiredCount,
         matchedSubscriptions: subscriptions.length,
-        matchedBy: userKey ? "userKey" : "fallback-all",
+        matchedBy: body.userKey?.trim() ? "userKey" : "admin-default",
         failureReasons: Array.from(failureReasons.entries()).map(([reason, count]) => ({
           reason,
           count,
@@ -112,6 +110,6 @@ export async function POST(request: Request) {
     failedCount,
     removedExpiredCount,
     matchedSubscriptions: subscriptions.length,
-    matchedBy: userKey ? "userKey" : "fallback-all",
+    matchedBy: body.userKey?.trim() ? "userKey" : "admin-default",
   })
 }

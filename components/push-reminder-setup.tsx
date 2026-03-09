@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { Button } from "./ui/button"
-import { Input } from "./ui/input"
+
+const ADMIN_PUSH_USER_KEY = "admin"
 
 function isIosSafari(): boolean {
   const ua = navigator.userAgent.toLowerCase()
@@ -35,7 +36,6 @@ function base64UrlToArrayBuffer(base64Url: string): ArrayBuffer {
 }
 
 export function PushReminderSetup() {
-  const [userKey, setUserKey] = useState("")
   const [status, setStatus] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -43,8 +43,6 @@ export function PushReminderSetup() {
     try {
       setBusy(true)
       setStatus(null)
-
-      const trimmedUserKey = userKey.trim()
 
       if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
         setStatus("Ovaj browser ne podržava push notifikacije.")
@@ -87,7 +85,7 @@ export function PushReminderSetup() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          userKey: trimmedUserKey,
+          userKey: ADMIN_PUSH_USER_KEY,
           subscription,
         }),
       })
@@ -137,22 +135,13 @@ export function PushReminderSetup() {
     <section className="rounded-xl border bg-card p-4 shadow-sm">
       <h2 className="text-base font-semibold">Alarm na telefonu</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Uključi podsjetnike za ovaj telefon. Korisnik je opcion (za ciljanje po imenu).
+        Uključi podsjetnike za ovaj telefon. Notifikacije će stizati samo admin uređajima.
       </p>
       <p className="mt-1 text-xs text-muted-foreground">
         iPhone: push radi iz instalirane Home Screen aplikacije, ne iz običnog Safari taba.
       </p>
 
-      <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_auto_auto] sm:items-end">
-        <label className="grid gap-1 text-sm">
-          <span className="font-medium">Korisnik</span>
-          <Input
-            value={userKey}
-            onChange={(event) => setUserKey(event.target.value)}
-            placeholder="Opcionalno: isto ime kao u transferu"
-
-          />
-        </label>
+      <div className="mt-3 grid gap-3 sm:grid-cols-[auto_auto] sm:items-end">
 
         <Button
           type="button"

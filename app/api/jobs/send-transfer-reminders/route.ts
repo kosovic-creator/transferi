@@ -7,6 +7,8 @@ import { combineDateAndTimeUtc } from "@/actions/transfer-utils"
 export const dynamic = "force-dynamic"
 export const runtime = "nodejs"
 
+const ADMIN_PUSH_USER_KEY = "admin"
+
 function isAuthorized(request: Request, cronSecret: string): boolean {
     const authorization = request.headers.get("authorization")
     if (authorization === `Bearer ${cronSecret}`) {
@@ -95,23 +97,16 @@ export async function GET(request: Request) {
   let processedTransfers = 0
   let transfersMarkedAsSent = 0
   let transfersPendingRetry = 0
+  const subscriptions = await prisma.pushSubscription.findMany({
+    where: {
+      userKey: {
+        equals: ADMIN_PUSH_USER_KEY,
+        mode: "insensitive",
+      },
+    },
+  })
 
   for (const transfer of dueTransfers) {
-    const userKey = transfer.korisnik?.trim()
-      const subscriptionsForUser = await prisma.pushSubscription.findMany({
-          where: userKey
-              ? {
-                  userKey: {
-                      equals: userKey,
-                      mode: "insensitive",
-                  },
-              }
-              : undefined,
-    })
-      const subscriptions =
-          subscriptionsForUser.length > 0
-              ? subscriptionsForUser
-          : await prisma.pushSubscription.findMany()
     let sentForTransfer = 0
 
     const payload = {
