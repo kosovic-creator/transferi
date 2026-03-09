@@ -213,16 +213,6 @@ export default function DodajTransferPage() {
 					<Input name="brojTelefona" placeholder="npr. +38269111222" />
 				</div>
 
-				<label className="flex items-center gap-2 text-sm">
-					<input
-						type="checkbox"
-						name="alarmEnabled"
-						defaultChecked
-						className="h-4 w-4 rounded border"
-					/>
-					<span>Pošalji push obavještenje 1 sat prije transfera</span>
-				</label>
-
 				{error ? <p className="text-sm text-red-600">{error}</p> : null}
 
 				<SubmitButton />

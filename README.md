@@ -29,45 +29,10 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Push alarm podsjetnici
+## Podsjetnici
 
-Aplikacija podržava mobilne push podsjetnike koji šalju notifikaciju u vrijeme transfera.
-
-### Brzi početak
-
-1. Generiši VAPID ključeve:
-   ```bash
-   npm run generate-vapid
-   ```
-
-2. Popuni `.env` sa potrebnim varijablama (vidi `.env.example`)
-
-3. Primijeni migraciju:
-   ```bash
-   npx prisma migrate deploy
-   ```
-
-4. Deploy na Vercel (automatski postavlja cron iz `vercel.json`)
-
-**Detaljno objašnjenje setup-a:** [SETUP_ALARMI.md](./SETUP_ALARMI.md)
-
-### Admin-only podešavanje push pretplate
-
-Push setup vise nije na javnoj pocetnoj strani. Dostupan je samo na:
-
-`/admin/push?key=...`
-
-Dodaj u `.env`:
-
-```bash
-ADMIN_PUSH_SETUP_KEY=drasko
-```
-
-Zatim otvori:
-
-`/admin/push?key=tvoj_kljuc`
-
-Napomena: samo admin treba da ukljuci push na ovoj stranici.
+Push notifikacije su iskljucene iz projekta radi jednostavnijeg odrzavanja.
+Trenutno je aktivan SMS tok (Twilio) nakon uspjesnog unosa transfera kada je unijet broj telefona.
 
 ## Online chat podrska (Crisp)
 

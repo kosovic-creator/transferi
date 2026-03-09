@@ -48,17 +48,6 @@ model ArhivaTransfera {
   alarmSentAt DateTime?
 }
 
-model PushSubscription {
-  id        String   @id @default(uuid())
-  userKey   String
-  endpoint  String   @unique
-  p256dhKey String
-  authKey   String
-  createdAt DateTime @default(now())
-
-  @@index([userKey])
-}
-
 model ChatSettings {
   id        Int      @id @default(1)
   enabled   Boolean  @default(true)
