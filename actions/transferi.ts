@@ -72,24 +72,30 @@ export async function getTransferById(
 export async function createTransfer(formData: FormData): Promise<TransferRecord> {
   const transferTimeZone = process.env.TRANSFER_TIMEZONE ?? "Europe/Podgorica"
   const relacija = parseRelacija(getRequiredString(formData, "relacija"))
+  const isApartmanAerodrom = relacija === "APARTMAN_AERODROM"
   const datum = parseDateOnly(getRequiredString(formData, "datum"))
   const vrijeme = parseTimeOnly(getRequiredString(formData, "vrijeme"))
   const datumVrijemeUtc = combineDateAndTimeUtc(datum, vrijeme, transferTimeZone)
   const alarmEnabled = formData.get("alarmEnabled") === "on"
+  const brojLetaNapomena = isApartmanAerodrom
+    ? null
+    : getRequiredString(formData, "brojLetaNapomena")
+  const korisnik = isApartmanAerodrom ? null : getRequiredString(formData, "korisnik")
+  const brojTelefona = isApartmanAerodrom ? null : getOptionalString(formData, "brojTelefona")
 
   await assertNoTransferOverlap(datum, vrijeme)
 
   const transfer = await prisma.transfer.create({
     data: {
       relacija,
-      brojLetaNapomena: getRequiredString(formData, "brojLetaNapomena"),
+      brojLetaNapomena,
       iznos: getOptionalNumber(formData, "iznos"),
       datum,
       vrijeme,
       datumVrijemeUtc,
       alarmEnabled,
-      korisnik: getRequiredString(formData, "korisnik"),
-      brojTelefona: getOptionalString(formData, "brojTelefona"),
+      korisnik,
+      brojTelefona,
     },
   })
 

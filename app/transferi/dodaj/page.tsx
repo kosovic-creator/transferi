@@ -45,6 +45,7 @@ export default function DodajTransferPage() {
 	const [sat, setSat] = useState("")
 	const [minuta, setMinuta] = useState("")
 	const [korisnik, setKorisnik] = useState("")
+	const isApartmanAerodrom = relacija === "apartman-aerodrom"
 	const today = useMemo(() => {
 		const now = new Date()
 		now.setHours(0, 0, 0, 0)
@@ -141,14 +142,16 @@ export default function DodajTransferPage() {
 					</Select>
 				</div>
 
-				<div className="space-y-2">
-					<label className="text-sm font-medium">Broj leta ili odakle dolazi *</label>
-					<Input
-						name="brojLetaNapomena"
-						placeholder="Npr. broj leta ili odakle dolazi"
-						required
-					/>
-				</div>
+				{!isApartmanAerodrom ? (
+					<div className="space-y-2">
+						<label className="text-sm font-medium">Broj leta ili odakle dolazi *</label>
+						<Input
+							name="brojLetaNapomena"
+							placeholder="Npr. broj leta ili odakle dolazi"
+							required
+						/>
+					</div>
+				) : null}
 
 				<div className="space-y-2">
 					<label className="text-sm font-medium">Datum</label>
@@ -197,21 +200,25 @@ export default function DodajTransferPage() {
 					<Input name="iznos" type="number" min="0" step="0.01" defaultValue="20" />
 				</div>
 
-				<div className="space-y-2">
-					<label className="text-sm font-medium">Korisnik *</label>
-					<Input
-						name="korisnik"
-						placeholder="Ime korisnika"
-						value={korisnik}
-						onChange={(event) => setKorisnik(event.target.value)}
-						required
-					/>
-				</div>
+				{!isApartmanAerodrom ? (
+					<div className="space-y-2">
+						<label className="text-sm font-medium">Korisnik *</label>
+						<Input
+							name="korisnik"
+							placeholder="Ime korisnika"
+							value={korisnik}
+							onChange={(event) => setKorisnik(event.target.value)}
+							required
+						/>
+					</div>
+				) : null}
 
-				<div className="space-y-2">
-					<label className="text-sm font-medium">Telefon korisnika (opciono)</label>
-					<Input name="brojTelefona" placeholder="npr. +38269111222" />
-				</div>
+				{!isApartmanAerodrom ? (
+					<div className="space-y-2">
+						<label className="text-sm font-medium">Telefon korisnika (opciono)</label>
+						<Input name="brojTelefona" placeholder="npr. +38269111222" />
+					</div>
+				) : null}
 
 				{error ? <p className="text-sm text-red-600">{error}</p> : null}
 
