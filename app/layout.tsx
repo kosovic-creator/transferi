@@ -5,6 +5,7 @@ import { AppToaster } from "@/components/ui/toaster";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteNavbar } from "@/components/site-navbar";
 import { ChatSupportWidget } from "@/components/chat-support-widget";
+import { OfflineNotice } from "./offline-notice";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <OfflineNotice />
         <div className="flex min-h-screen flex-col">
           <SiteNavbar />
           <div className="flex-1 pb-24">{children}</div>
