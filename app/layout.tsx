@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteNavbar } from "@/components/site-navbar";
 import { ChatSupportWidget } from "@/components/chat-support-widget";
 import { OfflineNotice } from "./offline-notice";
+import { RegisterPWA } from "@/components/register-pwa";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +47,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <RegisterPWA />
         <OfflineNotice />
         <div className="flex min-h-screen flex-col">
           <SiteNavbar />
