@@ -12,7 +12,7 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>
 }
 
-const DISMISS_KEY = "pwa-install-dismissed"
+const DISMISS_KEY = "pwa-install-dismissed-v2"
 
 function isIosDevice(): boolean {
   if (typeof navigator === "undefined") return false
