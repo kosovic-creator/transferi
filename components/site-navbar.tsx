@@ -4,7 +4,6 @@ import Link from "next/link"
 import { useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { ChatAdminToggle } from "@/components/chat-admin-toggle"
-import { InstallAppButton } from "@/components/install-app-button"
 
 const navItems = [
 //   { href: "/", label: "Početna" },
@@ -47,7 +46,6 @@ export function SiteNavbar() {
         </Link>
 
         <nav className="flex items-center gap-2 sm:gap-3">
-          <InstallAppButton />
           <ChatAdminToggle />
           {navItems.map((item) => (
             <Link

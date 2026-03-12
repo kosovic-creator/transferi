@@ -7,6 +7,7 @@ import { SiteNavbar } from "@/components/site-navbar";
 import { ChatSupportWidget } from "@/components/chat-support-widget";
 import { OfflineNotice } from "./offline-notice";
 import { RegisterPWA } from "@/components/register-pwa";
+import { InstallBanner } from "@/components/install-banner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +50,7 @@ export default function RootLayout({
       >
         <RegisterPWA />
         <OfflineNotice />
+        <InstallBanner />
         <div className="flex min-h-screen flex-col">
           <SiteNavbar />
           <div className="flex-1 pb-24">{children}</div>
