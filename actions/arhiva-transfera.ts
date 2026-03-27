@@ -171,7 +171,7 @@ export async function restoreTransferFromArhiva(
 ): Promise<TransferRecord> {
   const id = getRequiredString(formData, "id")
 
-  const restored = await prisma.$transaction(async (tx) => {
+  const restored = await prisma.$transaction(async (tx: any) => {
     const archived = await tx.arhivaTransfera.findUnique({ where: { id } })
 
     if (!archived) {

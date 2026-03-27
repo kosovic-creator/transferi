@@ -212,7 +212,7 @@ export async function updateTransfer(formData: FormData): Promise<TransferRecord
 export async function deleteTransfer(formData: FormData): Promise<TransferRecord> {
   const id = getRequiredString(formData, "id")
 
-  const transfer = await prisma.$transaction(async (tx) => {
+  const transfer = await prisma.$transaction(async (tx: { transfer: { delete: (arg0: { where: { id: string } }) => any }; arhivaTransfera: { create: (arg0: { data: { id: any; relacija: any; brojLetaNapomena: any; iznos: any; datum: any; vrijeme: any; datumVrijemeUtc: any; alarmEnabled: any; alarmSentAt: any; korisnik: any; brojTelefona: any } }) => any } }) => {
     const deleted = await tx.transfer.delete({ where: { id } })
 
     await tx.arhivaTransfera.create({

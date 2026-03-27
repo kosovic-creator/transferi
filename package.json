@@ -8,11 +8,10 @@
     "start": "next start",
     "lint": "eslint"
   },
-  "packageManager": "pnpm@8.0.0",
   "dependencies": {
     "@base-ui/react": "^1.2.0",
     "@prisma/adapter-pg": "^7.4.2",
-    "@prisma/client": "^7.4.2",
+    "@prisma/client": "^7.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -33,7 +32,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/pg": "^8.18.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
@@ -43,5 +41,4 @@
     "tsx": "^4.21.0",
     "typescript": "^5"
   }
-
 }

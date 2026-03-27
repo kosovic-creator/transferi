@@ -1,6 +1,6 @@
 // Ovo je helper koji možeš koristiti u bilo kojoj client komponenti za postavljanje locale cookie-ja i brisanje viška cookie-ja
 
-export function setLocaleCookie(locale) {
+export function setLocaleCookie(locale: string) {
   document.cookie = `locale=${locale}; path=/; max-age=31536000`;
 }
 

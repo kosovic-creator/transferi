@@ -2,7 +2,8 @@
 
 import { useMemo, useState, useEffect } from "react"
 import { setLocaleCookie, deleteExtraLocaleCookies } from "@/lib/locale-cookie-utils"
-function LanguageSwitcher({ current, onChange }: { current: string, onChange: (lang: string) => void }) {
+type Locale = "sr" | "en"
+function LanguageSwitcher({ current, onChange }: { current: Locale, onChange: (lang: Locale) => void }) {
 	// Emoji zastave: 🇲🇪 (Montenegro), 🇬🇧 (UK)
 	// Prikazujemo samo zastavu za neaktivni jezik
 	return (
@@ -30,7 +31,7 @@ function LanguageSwitcher({ current, onChange }: { current: string, onChange: (l
 		</div>
 	)
 }
-import { getLocale, translations } from "@/lib/transferi-i18n"
+import { translations } from "@/lib/transferi-i18n"
 import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { useFormStatus } from "react-dom"
@@ -82,21 +83,23 @@ export default function DodajTransferPage() {
 	}, [])
 
 	// Lokalizacija (App Router friendly)
-	const [locale, setLocale] = useState("sr")
+	type Locale = "sr" | "en"
+	const [locale, setLocale] = useState<Locale>("sr")
 	useEffect(() => {
 		const match = document.cookie.match(/(?:^|; )locale=([^;]*)/)
 		if (match && match[1]) {
-			setLocale(match[1].split("-")[0])
+			const l = match[1].split("-")[0]
+			if (l === "en" || l === "sr") setLocale(l)
 		}
 	}, [])
 
-	function handleLanguageChange(lang: string) {
+	function handleLanguageChange(lang: Locale) {
 		setLocaleCookie(lang)
 		deleteExtraLocaleCookies()
 		setLocale(lang)
 		// Nema reload, sve se ažurira preko state-a
 	}
-	const t = translations[locale] || translations.sr
+	const t = translations[locale]
 
 	const datumString = useMemo(() => {
 		if (!datum) {
@@ -122,7 +125,7 @@ export default function DodajTransferPage() {
 
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col px-4 py-10">
-			<LanguageSwitcher current={locale} onChange={handleLanguageChange} />
+			<LanguageSwitcher current={locale} onChange={handleLanguageChange as (lang: Locale) => void} />
 			<div className="mb-8 space-y-2">
 				<h1 className="text-2xl font-semibold">{t.noviTransfer}</h1>
 				<p className="text-sm text-muted-foreground">
