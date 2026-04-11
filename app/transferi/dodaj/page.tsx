@@ -125,7 +125,7 @@ export default function DodajTransferPage() {
 
 	return (
 		<main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col px-4 py-10">
-			<LanguageSwitcher current={locale} onChange={handleLanguageChange as (lang: Locale) => void} />
+			{/* <LanguageSwitcher current={locale} onChange={handleLanguageChange as (lang: Locale) => void} /> */}
 			<div className="mb-8 space-y-2">
 				<h1 className="text-2xl font-semibold">{t.noviTransfer}</h1>
 				<p className="text-sm text-muted-foreground">

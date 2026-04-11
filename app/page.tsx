@@ -63,7 +63,7 @@ export default async function Home({ searchParams }: HomePageProps) {
               </p>
             </div>
 
-           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <Link
                 href="/transferi/dodaj"
                 className="inline-flex h-10 items-center justify-center rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800"
@@ -78,7 +78,7 @@ export default async function Home({ searchParams }: HomePageProps) {
                 Arhiva
               </Link>
             </div>
-           </div>
+          </div>
         </div>
 
         {transferi.length === 0 ? (
@@ -103,19 +103,6 @@ export default async function Home({ searchParams }: HomePageProps) {
                 <p className="text-sm font-medium">{transfer.iznos.toFixed(2)} EUR</p>
               </div>
 
-              <p className="mb-3 text-sm text-muted-foreground">
-                Korisnik: <span className="font-medium text-foreground">{transfer.korisnik ?? "-"}</span>
-              </p>
-
-              <p className="mb-3 text-sm text-muted-foreground">
-                Broj leta / odakle dolazi:{" "}
-                <span className="font-medium text-foreground">{transfer.brojLetaNapomena ?? "-"}</span>
-              </p>
-
-              <p className="mb-3 text-sm text-muted-foreground">
-                Telefon korisnika: <span className="font-medium text-foreground">{transfer.brojTelefona ?? "-"}</span>
-              </p>
-
               <div className="flex flex-wrap items-center gap-2">
                 <Link
                   href={`/transferi/${transfer.id}`}
@@ -137,16 +124,13 @@ export default async function Home({ searchParams }: HomePageProps) {
         </div>
 
         <div className="hidden overflow-x-auto rounded-xl border bg-card shadow-sm md:block">
-          <table className="w-full min-w-225 border-collapse text-sm">
+          <table className="w-full min-w-160 border-collapse text-sm">
             <thead className="bg-muted/50 text-left">
               <tr>
                 <th className="px-3 py-2">Datum</th>
                 <th className="px-3 py-2">Vrijeme</th>
                 <th className="px-3 py-2">Relacija</th>
                 <th className="px-3 py-2">Iznos</th>
-                <th className="px-3 py-2">Korisnik</th>
-                <th className="px-3 py-2">Broj leta / odakle dolazi</th>
-                <th className="px-3 py-2">Telefon korisnika</th>
                 <th className="px-3 py-2">Akcije</th>
               </tr>
             </thead>
@@ -157,9 +141,6 @@ export default async function Home({ searchParams }: HomePageProps) {
                   <td className="px-3 py-2">{formatTimeDisplay(transfer.vrijeme)}</td>
                   <td className="px-3 py-2">{relacijaToValue(transfer.relacija)}</td>
                   <td className="px-3 py-2">{transfer.iznos.toFixed(2)}</td>
-                  <td className="px-3 py-2">{transfer.korisnik ?? "-"}</td>
-                  <td className="px-3 py-2">{transfer.brojLetaNapomena ?? "-"}</td>
-                  <td className="px-3 py-2">{transfer.brojTelefona ?? "-"}</td>
                   <td className="px-3 py-2">
                     <div className="flex flex-wrap items-start gap-2">
                       <Link
