@@ -85,18 +85,27 @@ export async function createTransfer(formData: FormData): Promise<TransferRecord
 
   await assertNoTransferOverlap(datum, vrijeme)
 
-  const transfer = await prisma.transfer.create({
-    data: {
-      relacija,
-      brojLetaNapomena,
-      iznos: getOptionalNumber(formData, "iznos"),
-      datum,
-      vrijeme,
-      datumVrijemeUtc,
-      alarmEnabled,
-      korisnik,
-      brojTelefona,
-    },
+  const transfer = await prisma.$transaction(async (tx) => {
+    const created = await tx.transfer.create({
+      data: {
+        relacija,
+        brojLetaNapomena,
+        iznos: getOptionalNumber(formData, "iznos"),
+        datum,
+        vrijeme,
+        datumVrijemeUtc,
+        alarmEnabled,
+        korisnik,
+        brojTelefona,
+      },
+    })
+
+    // Transfer mora ostati samo u aktivnoj tabeli nakon kreiranja.
+    await tx.arhivaTransfera.deleteMany({
+      where: { id: created.id },
+    })
+
+    return created
   })
 
   revalidatePath("/transferi")
