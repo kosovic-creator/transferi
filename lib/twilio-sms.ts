@@ -108,11 +108,13 @@ export async function sendTransferReceivedSms(
   const body = `Transfer ${formatDateDisplay(input.datum)} ${formatTimeDisplay(input.vrijeme)} | ${relacijaShort} | Kor:${korisnikShort} | Let:${letShort}`
 
   try {
+    console.log("[twilio-sms] sending", { to, from, body })
     const message = await client.messages.create({
       to,
       from,
       body,
     })
+    console.log("[twilio-sms] sent response", { sid: message.sid, status: message.status, errorCode: message.errorCode, errorMessage: message.errorMessage })
 
     let latestStatus = String(message.status ?? "unknown")
     let latestErrorCode: number | null | undefined = message.errorCode
@@ -192,11 +194,13 @@ export async function sendTransferUpdatedSms(
   const body = `IZMJENA: ${formatDateDisplay(input.datum)} ${formatTimeDisplay(input.vrijeme)} | ${relacijaShort} | Kor:${korisnikShort} | Let:${letShort}`
 
   try {
+    console.log("[twilio-sms] sending update", { to, from, body })
     const message = await client.messages.create({
       to,
       from,
       body,
     })
+    console.log("[twilio-sms] sent update response", { sid: message.sid, status: message.status, errorCode: message.errorCode, errorMessage: message.errorMessage })
 
     let latestStatus = String(message.status ?? "unknown")
     let latestErrorCode: number | null | undefined = message.errorCode
@@ -275,11 +279,13 @@ export async function sendTransferDeletedSms(
   const body = `OBRISAN: ${formatDateDisplay(input.datum)} ${formatTimeDisplay(input.vrijeme)} | ${relacijaShort} | Kor:${korisnikShort} | Let:${letShort}`
 
   try {
+    console.log("[twilio-sms] sending delete", { to, from, body })
     const message = await client.messages.create({
       to,
       from,
       body,
     })
+    console.log("[twilio-sms] sent delete response", { sid: message.sid, status: message.status, errorCode: message.errorCode, errorMessage: message.errorMessage })
 
     let latestStatus = String(message.status ?? "unknown")
     let latestErrorCode: number | null | undefined = message.errorCode
