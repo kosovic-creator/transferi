@@ -127,14 +127,22 @@ type CreateTransferResult =
 export async function createTransferSafe(formData: FormData): Promise<CreateTransferResult> {
   try {
     const transfer = await createTransfer(formData)
-    const sms = await sendTransferReceivedSms({
-      transferId: transfer.id,
-      relacija: transfer.relacija,
-      datum: transfer.datum,
-      vrijeme: transfer.vrijeme,
-      korisnik: transfer.korisnik ?? "-",
-      brojLetaNapomena: transfer.brojLetaNapomena ?? "-",
-    })
+    const smsDisabled =
+      process.env.DISABLE_TRANSFER_SMS === "1" ||
+      process.env.DISABLE_TRANSFER_SMS === "true"
+
+    let sms: SmsSendResult = { status: "skipped", reason: "SMS za nove rezervacije onemogućen." }
+
+    if (!smsDisabled) {
+      sms = await sendTransferReceivedSms({
+        transferId: transfer.id,
+        relacija: transfer.relacija,
+        datum: transfer.datum,
+        vrijeme: transfer.vrijeme,
+        korisnik: transfer.korisnik ?? "-",
+        brojLetaNapomena: transfer.brojLetaNapomena ?? "-",
+      })
+    }
 
     return { ok: true, transfer, sms }
   } catch (error) {

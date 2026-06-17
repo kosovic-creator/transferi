@@ -158,9 +158,8 @@ export default function DodajTransferPage() {
 						)
 					}
 
-					if (result.sms.status === "skipped") {
-						toast.error(`SMS nije poslat: ${result.sms.reason}`)
-					}
+					// If SMS sending was intentionally skipped (e.g. DISABLE_TRANSFER_SMS),
+					// don't show an error toast to the user.
 
 					if (result.sms.status === "failed") {
 						toast.error(`Transfer je sačuvan, ali SMS nije poslat: ${result.sms.error}`)
@@ -246,7 +245,7 @@ export default function DodajTransferPage() {
 
 				<div className="space-y-2">
 					<label className="text-sm font-medium">{t.iznos}</label>
-					<Input name="iznos" type="number" min="0" step="0.01" defaultValue="20" />
+					<Input name="iznos" type="number" min="0" step="0.01" defaultValue="15" />
 				</div>
 
 				{!isApartmanAerodrom ? (

@@ -74,9 +74,17 @@ function normalizePhoneNumber(rawValue: string): string {
   return compact
 }
 
+function isSmsDisabled(): boolean {
+  const v = process.env.DISABLE_TRANSFER_SMS ?? ""
+  return v === "1" || v.toLowerCase() === "true"
+}
+
 export async function sendTransferReceivedSms(
   input: SendTransferReceivedSmsInput
 ): Promise<SmsSendResult> {
+  if (isSmsDisabled()) {
+    return { status: "skipped", reason: "SMS za nove rezervacije onemogućen (DISABLE_TRANSFER_SMS)." }
+  }
   const accountSid = process.env.TWILIO_ACCOUNT_SID
   const authToken = process.env.TWILIO_AUTH_TOKEN
   const from = process.env.TWILIO_FROM_NUMBER
@@ -164,6 +172,9 @@ export async function sendTransferReceivedSms(
 export async function sendTransferUpdatedSms(
   input: SendTransferReceivedSmsInput
 ): Promise<SmsSendResult> {
+  if (isSmsDisabled()) {
+    return { status: "skipped", reason: "SMS za izmjene rezervacija onemogućen (DISABLE_TRANSFER_SMS)." }
+  }
   const accountSid = process.env.TWILIO_ACCOUNT_SID
   const authToken = process.env.TWILIO_AUTH_TOKEN
   const from = process.env.TWILIO_FROM_NUMBER
@@ -249,6 +260,9 @@ export async function sendTransferUpdatedSms(
 export async function sendTransferDeletedSms(
   input: SendTransferReceivedSmsInput
 ): Promise<SmsSendResult> {
+  if (isSmsDisabled()) {
+    return { status: "skipped", reason: "SMS za brisanja rezervacija onemogućen (DISABLE_TRANSFER_SMS)." }
+  }
   const accountSid = process.env.TWILIO_ACCOUNT_SID
   const authToken = process.env.TWILIO_AUTH_TOKEN
   const from = process.env.TWILIO_FROM_NUMBER
