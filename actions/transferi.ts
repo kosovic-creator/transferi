@@ -90,7 +90,8 @@ export async function createTransfer(formData: FormData): Promise<TransferRecord
 
   await assertNoTransferOverlap(datum, vrijeme)
 
-  const transfer = await prisma.$transaction(async (tx) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const transfer = await prisma.$transaction(async (tx: any) => {
     const created = await tx.transfer.create({
       data: {
         relacija,

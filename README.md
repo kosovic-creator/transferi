@@ -5,14 +5,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 First, run the development server:
 
 ```bash
-npm run dev   a
-# or
-yarn dev
-# or
 pnpm dev
 # or
 bun dev
-```.a
+```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -52,7 +48,7 @@ NEXT_PUBLIC_SUPPORT_PHONE=+38267123456
 NEXT_PUBLIC_WHATSAPP_NUMBER=38267123456
 ```
 
-3. Restartuj razvojni server (`npm run dev`).
+3. Restartuj razvojni server (`pnpm dev`).
 
 Ako `NEXT_PUBLIC_CRISP_WEBSITE_ID` nije postavljen, chat widget se ne prikazuje.
 
